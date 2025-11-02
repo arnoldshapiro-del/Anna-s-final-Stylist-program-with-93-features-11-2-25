@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Sparkles, Palette, TrendingUp, ShoppingBag, Calendar, Users, Shirt, Heart,
   Leaf, Recycle, BarChart3, Trophy, Camera, Crown, Globe, Zap,
-  Star, Target, Scissors, Package, Gem,
+  Star, Target, Scissors, Package, Gem, Book,
   Home, Settings, User, Menu, X
 } from 'lucide-react';
 import * as AI from './geminiService';
@@ -41,6 +41,7 @@ function App() {
     { id: 'social', icon: Users, label: 'Social', color: 'bg-gradient-to-r from-violet-500 to-purple-500' },
     { id: 'sustainability', icon: Leaf, label: 'Eco Fashion', color: 'bg-gradient-to-r from-green-600 to-teal-500' },
     { id: 'gamification', icon: Trophy, label: 'Rewards', color: 'bg-gradient-to-r from-yellow-500 to-orange-500' },
+    { id: 'user-guide', icon: Book, label: 'User Guide', color: 'bg-gradient-to-r from-indigo-500 to-blue-600' },
     { id: 'settings', icon: Settings, label: 'Settings', color: 'bg-gradient-to-r from-gray-600 to-gray-700' },
   ];
 
@@ -701,6 +702,235 @@ function App() {
               </h3>
               <p style={{ fontSize: '16px', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
                 Complete style challenges, earn badges, unlock achievements, and level up your fashion game!
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'user-guide' && (
+          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: '42px',
+              fontWeight: '900',
+              color: 'white',
+              marginBottom: '32px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)',
+              textAlign: 'center'
+            }}>📖 Complete User Guide</h2>
+            
+            {/* Quick Start */}
+            <div style={{
+              background: 'linear-gradient(135deg, #667eea, #764ba2)',
+              borderRadius: '24px',
+              padding: '48px',
+              marginBottom: '32px',
+              color: 'white',
+              boxShadow: '0 20px 60px rgba(102, 126, 234, 0.3)'
+            }}>
+              <h3 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '32px', textAlign: 'center' }}>⚡ Quick Start</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.15)', padding: '24px', borderRadius: '16px', backdropFilter: 'blur(10px)' }}>
+                  <div style={{ fontSize: '48px', fontWeight: '900', opacity: 0.5, marginBottom: '12px' }}>1</div>
+                  <h4 style={{ fontSize: '20px', marginBottom: '12px' }}>Click a Section</h4>
+                  <p style={{ opacity: 0.9, lineHeight: 1.6 }}>Use the sidebar on the left to navigate between different features.</p>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.15)', padding: '24px', borderRadius: '16px', backdropFilter: 'blur(10px)' }}>
+                  <div style={{ fontSize: '48px', fontWeight: '900', opacity: 0.5, marginBottom: '12px' }}>2</div>
+                  <h4 style={{ fontSize: '20px', marginBottom: '12px' }}>Try AI Features</h4>
+                  <p style={{ opacity: 0.9, lineHeight: 1.6 }}>Click "AI Styling" and try any of the 73 AI functions instantly!</p>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.15)', padding: '24px', borderRadius: '16px', backdropFilter: 'blur(10px)' }}>
+                  <div style={{ fontSize: '48px', fontWeight: '900', opacity: 0.5, marginBottom: '12px' }}>3</div>
+                  <h4 style={{ fontSize: '20px', marginBottom: '12px' }}>Explore & Enjoy</h4>
+                  <p style={{ opacity: 0.9, lineHeight: 1.6 }}>Discover your perfect style with 93 incredible features!</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Features Overview */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '24px',
+              padding: '48px',
+              marginBottom: '32px',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '32px', color: '#1e293b', textAlign: 'center' }}>
+                🌟 All 93 Features Explained
+              </h3>
+              
+              <div style={{ display: 'grid', gap: '24px' }}>
+                {/* AI Styling */}
+                <div style={{ border: '2px solid #e2e8f0', borderRadius: '20px', padding: '32px', background: 'linear-gradient(135deg, #f0f9ff, #e0e7ff)' }}>
+                  <h4 style={{ fontSize: '24px', fontWeight: '700', color: '#667eea', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    ✨ AI Styling - 73 Functions!
+                  </h4>
+                  <p style={{ color: '#475569', marginBottom: '20px', lineHeight: 1.8 }}>
+                    The heart of the app! Click "AI Styling" in the sidebar to access all 73 AI-powered features. Each function uses Google's Gemini AI to give you instant fashion advice.
+                  </p>
+                  <div style={{ background: 'white', padding: '20px', borderRadius: '12px', marginBottom: '16px' }}>
+                    <strong style={{ color: '#667eea', display: 'block', marginBottom: '12px' }}>📝 How to Use:</strong>
+                    <ol style={{ marginLeft: '20px', color: '#64748b', lineHeight: 1.8 }}>
+                      <li>Click "AI Styling" in the sidebar</li>
+                      <li>Browse the grid of 73 AI functions</li>
+                      <li>Click any button to try it instantly</li>
+                      <li>Wait 5-15 seconds for AI to respond</li>
+                      <li>Read the personalized advice!</li>
+                    </ol>
+                  </div>
+                  <div style={{ background: '#fef3c7', padding: '16px', borderRadius: '12px', borderLeft: '4px solid #f59e0b' }}>
+                    <strong style={{ color: '#f59e0b' }}>💡 Pro Tip:</strong> Look for the "NEW" badges - these are the 10 special features including Brand Affinity, Carbon Footprint Calculator, Celebrity Style Twin, and more!
+                  </div>
+                </div>
+
+                {/* Top 10 Most Useful AI Functions */}
+                <div style={{ border: '2px solid #e2e8f0', borderRadius: '20px', padding: '32px', background: 'linear-gradient(135deg, #fce7f3, #fff1f2)' }}>
+                  <h4 style={{ fontSize: '24px', fontWeight: '700', color: '#f5576c', marginBottom: '16px' }}>
+                    🎯 Top 10 Most Useful AI Functions
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                    {[
+                      { num: '1', name: 'Generate Outfit', desc: 'Complete outfit suggestions for any occasion' },
+                      { num: '2', name: 'Occasion Dressing', desc: 'Perfect outfits for specific events' },
+                      { num: '3', name: 'Mix & Match', desc: 'Creative combinations from your wardrobe' },
+                      { num: '4', name: 'Accessory Pairing', desc: 'Perfect accessories for any outfit' },
+                      { num: '5', name: 'Color Palette', desc: 'Complementary colors with hex codes' },
+                      { num: '6', name: 'Body Type Styling', desc: 'Flattering advice for your shape' },
+                      { num: '7', name: 'Wardrobe Optimization', desc: 'Maximize your closet potential' },
+                      { num: '8', name: 'Personal Shopping', desc: 'AI shopping recommendations' },
+                      { num: '9', name: 'Carbon Footprint', desc: 'Track wardrobe sustainability (NEW!)' },
+                      { num: '10', name: 'Celebrity Style Twin', desc: 'Find your style match (NEW!)' }
+                    ].map((item, idx) => (
+                      <div key={idx} style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #fecdd3' }}>
+                        <strong style={{ color: '#f5576c', fontSize: '18px' }}>{item.num}. {item.name}</strong>
+                        <p style={{ color: '#64748b', fontSize: '14px', marginTop: '8px', lineHeight: 1.6 }}>{item.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Other Sections */}
+                <div style={{ border: '2px solid #e2e8f0', borderRadius: '20px', padding: '32px' }}>
+                  <h4 style={{ fontSize: '24px', fontWeight: '700', color: '#1e293b', marginBottom: '24px' }}>
+                    🎨 Other Features
+                  </h4>
+                  <div style={{ display: 'grid', gap: '20px' }}>
+                    {[
+                      { icon: '👔', title: 'Smart Wardrobe', desc: 'Organize your closet, analyze patterns, and optimize your collection' },
+                      { icon: '📈', title: 'Trend Forecasting', desc: 'Stay ahead with AI-powered trend predictions and fashion week insights' },
+                      { icon: '🛍️', title: 'Smart Shopping', desc: 'Budget optimization, brand recommendations, and shopping strategies' },
+                      { icon: '👥', title: 'Social Fashion', desc: 'Share outfits, connect with the community, follow influencers' },
+                      { icon: '🌿', title: 'Sustainability Hub', desc: 'Track carbon footprint, find eco-friendly alternatives, shop sustainably' },
+                      { icon: '🏆', title: 'Rewards System', desc: 'Complete challenges, earn badges, level up your fashion game!' }
+                    ].map((feature, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '16px', padding: '20px', background: '#f8fafc', borderRadius: '12px' }}>
+                        <div style={{ fontSize: '32px', flexShrink: 0 }}>{feature.icon}</div>
+                        <div>
+                          <strong style={{ fontSize: '18px', color: '#1e293b', display: 'block', marginBottom: '8px' }}>{feature.title}</strong>
+                          <p style={{ color: '#64748b', lineHeight: 1.6 }}>{feature.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Navigation Guide */}
+                <div style={{ border: '2px solid #e2e8f0', borderRadius: '20px', padding: '32px', background: 'linear-gradient(135deg, #e0f2fe, #dbeafe)' }}>
+                  <h4 style={{ fontSize: '24px', fontWeight: '700', color: '#0284c7', marginBottom: '16px' }}>
+                    🧭 How to Navigate
+                  </h4>
+                  <div style={{ background: 'white', padding: '24px', borderRadius: '12px' }}>
+                    <p style={{ color: '#475569', marginBottom: '20px', lineHeight: 1.8 }}>
+                      The app uses a <strong>vertical sidebar</strong> on the left for easy navigation:
+                    </p>
+                    <ul style={{ marginLeft: '20px', color: '#64748b', lineHeight: 2 }}>
+                      <li><strong>Home (🏠)</strong> - Beautiful landing page with overview</li>
+                      <li><strong>AI Styling (✨)</strong> - Access all 73 AI functions</li>
+                      <li><strong>Wardrobe (👔)</strong> - Manage your closet</li>
+                      <li><strong>Trends (📈)</strong> - Fashion forecasting</li>
+                      <li><strong>Shopping (🛍️)</strong> - Smart shopping assistant</li>
+                      <li><strong>Social (👥)</strong> - Fashion community</li>
+                      <li><strong>Eco Fashion (🌿)</strong> - Sustainability features</li>
+                      <li><strong>Rewards (🏆)</strong> - Gamification & challenges</li>
+                      <li><strong>User Guide (📖)</strong> - This page!</li>
+                      <li><strong>Settings (⚙️)</strong> - Configuration</li>
+                    </ul>
+                    <div style={{ marginTop: '20px', padding: '16px', background: '#fef3c7', borderRadius: '8px', borderLeft: '4px solid #f59e0b' }}>
+                      <strong style={{ color: '#f59e0b' }}>💡 Tip:</strong> Click the menu icon (☰) to collapse the sidebar and get more screen space!
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tips & Tricks */}
+                <div style={{ border: '2px solid #e2e8f0', borderRadius: '20px', padding: '32px', background: 'linear-gradient(135deg, #fef3c7, #fef9c3)' }}>
+                  <h4 style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b', marginBottom: '16px' }}>
+                    💡 Pro Tips & Best Practices
+                  </h4>
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    {[
+                      { tip: 'Be Specific', desc: 'The more details you give AI functions, the better the results. Instead of "outfit", try "elegant outfit for summer wedding"' },
+                      { tip: 'Try Multiple Functions', desc: 'Use several AI functions together for comprehensive advice. Example: Generate Outfit → Accessory Pairing → Color Palette' },
+                      { tip: 'Save Your Favorites', desc: 'Remember which AI functions you use most often so you can find them quickly' },
+                      { tip: 'Wait for AI', desc: 'AI responses take 5-15 seconds. You\'ll see "⏳ AI Processing..." while it works - this is normal!' },
+                      { tip: 'Check NEW Features', desc: 'Look for the "NEW" badges on 10 special features including Carbon Footprint and Celebrity Style Twin' },
+                      { tip: 'Explore Everything', desc: 'With 93 features, there\'s always something new to discover. Try one new function each day!' }
+                    ].map((item, idx) => (
+                      <div key={idx} style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #fde68a' }}>
+                        <strong style={{ color: '#f59e0b', fontSize: '16px', display: 'block', marginBottom: '8px' }}>✨ {item.tip}</strong>
+                        <p style={{ color: '#64748b', lineHeight: 1.6 }}>{item.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Troubleshooting */}
+                <div style={{ border: '2px solid #e2e8f0', borderRadius: '20px', padding: '32px', background: '#fef2f2' }}>
+                  <h4 style={{ fontSize: '24px', fontWeight: '700', color: '#ef4444', marginBottom: '16px' }}>
+                    🔧 Troubleshooting
+                  </h4>
+                  <div style={{ background: 'white', padding: '24px', borderRadius: '12px' }}>
+                    <div style={{ marginBottom: '24px' }}>
+                      <strong style={{ fontSize: '18px', color: '#1e293b', display: 'block', marginBottom: '12px' }}>❌ AI Functions Show Errors?</strong>
+                      <p style={{ color: '#64748b', marginBottom: '12px', lineHeight: 1.6 }}>If AI features don't work:</p>
+                      <ol style={{ marginLeft: '20px', color: '#64748b', lineHeight: 1.8 }}>
+                        <li>Check that your API key is set in Netlify/Vercel environment variables</li>
+                        <li>Variable must be named exactly: <code style={{ background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>VITE_GEMINI_API_KEY</code></li>
+                        <li>After adding the key, trigger a new deploy</li>
+                        <li>Clear browser cache and reload</li>
+                      </ol>
+                    </div>
+                    <div style={{ marginBottom: '24px' }}>
+                      <strong style={{ fontSize: '18px', color: '#1e293b', display: 'block', marginBottom: '12px' }}>⏳ AI is Slow?</strong>
+                      <p style={{ color: '#64748b', lineHeight: 1.6 }}>This is normal! AI processing takes 5-15 seconds. You'll see "⏳ AI Processing..." message while it works.</p>
+                    </div>
+                    <div>
+                      <strong style={{ fontSize: '18px', color: '#1e293b', display: 'block', marginBottom: '12px' }}>🎨 Visual Issues?</strong>
+                      <ul style={{ marginLeft: '20px', color: '#64748b', lineHeight: 1.8 }}>
+                        <li>Try refreshing the page</li>
+                        <li>Update your browser to the latest version</li>
+                        <li>Use Chrome or Edge for best performance</li>
+                        <li>Check that browser zoom is at 100%</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* Final CTA */}
+            <div style={{
+              background: 'linear-gradient(135deg, #f093fb, #f5576c)',
+              borderRadius: '24px',
+              padding: '48px',
+              textAlign: 'center',
+              color: 'white',
+              boxShadow: '0 20px 60px rgba(245, 87, 108, 0.3)'
+            }}>
+              <h3 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '16px' }}>🎉 Ready to Transform Your Style?</h3>
+              <p style={{ fontSize: '18px', opacity: 0.95, maxWidth: '800px', margin: '0 auto', lineHeight: 1.8 }}>
+                You now know everything about Fashion AI Suite! Start with "AI Styling" to try the 73 AI functions, explore other features, and discover your perfect style. Fashion is about expressing yourself - let's get started!
               </p>
             </div>
           </div>
