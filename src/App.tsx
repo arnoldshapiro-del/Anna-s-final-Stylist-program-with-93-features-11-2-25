@@ -1,0 +1,792 @@
+import { useState } from 'react';
+import {
+  Sparkles, Palette, TrendingUp, ShoppingBag, Calendar, Users, Shirt, Heart,
+  Leaf, Recycle, BarChart3, Trophy, Camera, Crown, Globe, Zap,
+  Star, Target, Scissors, Package, Gem,
+  Home, Settings, User, Menu, X
+} from 'lucide-react';
+import * as AI from './geminiService';
+
+function App() {
+  const [activeTab, setActiveTab] = useState('home');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState('');
+
+  // ===== AI FUNCTION HANDLER =====
+  const handleAIFunction = async (
+    _functionName: string,
+    func: (...args: any[]) => Promise<string>,
+    ...args: any[]
+  ) => {
+    setLoading(true);
+    setResult('');
+    try {
+      const response = await func(...args);
+      setResult(response);
+    } catch (error) {
+      setResult('❌ Error: ' + (error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ===== SIDEBAR NAVIGATION =====
+  const navItems = [
+    { id: 'home', icon: Home, label: 'Home', color: 'bg-gradient-to-r from-purple-500 to-pink-500' },
+    { id: 'ai-styling', icon: Sparkles, label: 'AI Styling', color: 'bg-gradient-to-r from-blue-500 to-cyan-500' },
+    { id: 'wardrobe', icon: Shirt, label: 'Wardrobe', color: 'bg-gradient-to-r from-orange-500 to-red-500' },
+    { id: 'trends', icon: TrendingUp, label: 'Trends', color: 'bg-gradient-to-r from-green-500 to-emerald-500' },
+    { id: 'shopping', icon: ShoppingBag, label: 'Shopping', color: 'bg-gradient-to-r from-pink-500 to-rose-500' },
+    { id: 'social', icon: Users, label: 'Social', color: 'bg-gradient-to-r from-violet-500 to-purple-500' },
+    { id: 'sustainability', icon: Leaf, label: 'Eco Fashion', color: 'bg-gradient-to-r from-green-600 to-teal-500' },
+    { id: 'gamification', icon: Trophy, label: 'Rewards', color: 'bg-gradient-to-r from-yellow-500 to-orange-500' },
+    { id: 'settings', icon: Settings, label: 'Settings', color: 'bg-gradient-to-r from-gray-600 to-gray-700' },
+  ];
+
+  return (
+    <div className="app-container" style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%)',
+      backgroundSize: '400% 400%',
+      animation: 'gradient 15s ease infinite',
+      display: 'flex',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    }}>
+      
+      {/* ===== VERTICAL SIDEBAR ===== */}
+      <aside style={{
+        width: sidebarOpen ? '280px' : '80px',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        boxShadow: '4px 0 24px rgba(0,0,0,0.1)',
+        transition: 'width 0.3s ease',
+        position: 'fixed',
+        height: '100vh',
+        left: 0,
+        top: 0,
+        zIndex: 1000,
+        overflow: 'hidden'
+      }}>
+        {/* Sidebar Header */}
+        <div style={{
+          padding: '24px',
+          borderBottom: '1px solid rgba(0,0,0,0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          {sidebarOpen && (
+            <div>
+              <h1 style={{
+                fontSize: '24px',
+                fontWeight: '800',
+                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                margin: 0
+              }}>Fashion AI</h1>
+              <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#64748b' }}>93 Features</p>
+            </div>
+          )}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '8px',
+              borderRadius: '8px',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
+            onMouseOut={(e) => e.currentTarget.style.background = 'none'}
+          >
+            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+
+        {/* Navigation Items */}
+        <nav style={{ padding: '16px' }}>
+          {navItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '14px',
+                marginBottom: '8px',
+                border: 'none',
+                borderRadius: '12px',
+                background: activeTab === item.id ? item.color : 'transparent',
+                color: activeTab === item.id ? 'white' : '#64748b',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                fontWeight: activeTab === item.id ? '600' : '500',
+                fontSize: '15px',
+                textAlign: 'left',
+                transform: activeTab === item.id ? 'scale(1.02)' : 'scale(1)'
+              }}
+              onMouseOver={(e) => {
+                if (activeTab !== item.id) {
+                  e.currentTarget.style.background = '#f1f5f9';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (activeTab !== item.id) {
+                  e.currentTarget.style.background = 'transparent';
+                }
+              }}
+            >
+              <item.icon size={20} />
+              {sidebarOpen && <span>{item.label}</span>}
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      {/* ===== MAIN CONTENT AREA ===== */}
+      <main style={{
+        marginLeft: sidebarOpen ? '280px' : '80px',
+        flex: 1,
+        padding: '32px',
+        transition: 'margin-left 0.3s ease',
+        overflowY: 'auto'
+      }}>
+        
+        {/* HOME / LANDING PAGE */}
+        {activeTab === 'home' && (
+          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            {/* Hero Section */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '24px',
+              padding: '64px',
+              textAlign: 'center',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+              marginBottom: '48px',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              {/* Animated Background Pattern */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                opacity: 0.05,
+                background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
+              }} />
+              
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{
+                  width: '120px',
+                  height: '120px',
+                  margin: '0 auto 24px',
+                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                  borderRadius: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 20px 60px rgba(102,126,234,0.4)',
+                  animation: 'float 3s ease-in-out infinite'
+                }}>
+                  <Sparkles size={60} color="white" />
+                </div>
+                
+                <h1 style={{
+                  fontSize: '56px',
+                  fontWeight: '900',
+                  marginBottom: '16px',
+                  background: 'linear-gradient(135deg, #667eea, #764ba2, #f093fb)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  lineHeight: 1.2
+                }}>
+                  Fashion AI Suite
+                </h1>
+                
+                <p style={{
+                  fontSize: '24px',
+                  color: '#64748b',
+                  marginBottom: '32px',
+                  fontWeight: '500'
+                }}>
+                  Your Ultimate Style Companion with <strong style={{ color: '#667eea' }}>93 AI-Powered Features</strong>
+                </p>
+                
+                <div style={{
+                  display: 'flex',
+                  gap: '16px',
+                  justifyContent: 'center',
+                  flexWrap: 'wrap',
+                  marginTop: '32px'
+                }}>
+                  <div style={{
+                    padding: '16px 32px',
+                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                    borderRadius: '12px',
+                    color: 'white',
+                    fontWeight: '600'
+                  }}>
+                    <div style={{ fontSize: '32px' }}>73</div>
+                    <div style={{ fontSize: '14px', opacity: 0.9 }}>AI Functions</div>
+                  </div>
+                  <div style={{
+                    padding: '16px 32px',
+                    background: 'linear-gradient(135deg, #f093fb, #f5576c)',
+                    borderRadius: '12px',
+                    color: 'white',
+                    fontWeight: '600'
+                  }}>
+                    <div style={{ fontSize: '32px' }}>20</div>
+                    <div style={{ fontSize: '14px', opacity: 0.9 }}>New Features</div>
+                  </div>
+                  <div style={{
+                    padding: '16px 32px',
+                    background: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+                    borderRadius: '12px',
+                    color: 'white',
+                    fontWeight: '600'
+                  }}>
+                    <div style={{ fontSize: '32px' }}>∞</div>
+                    <div style={{ fontSize: '14px', opacity: 0.9 }}>Possibilities</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature Grid - Centered */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '24px',
+              maxWidth: '1200px',
+              margin: '0 auto'
+            }}>
+              {[
+                { icon: Sparkles, title: 'AI Styling', desc: '73 AI-powered fashion functions', color: 'linear-gradient(135deg, #667eea, #764ba2)' },
+                { icon: Shirt, title: 'Smart Wardrobe', desc: 'Organize & optimize your closet', color: 'linear-gradient(135deg, #f093fb, #f5576c)' },
+                { icon: TrendingUp, title: 'Trend Forecasting', desc: 'Stay ahead of fashion trends', color: 'linear-gradient(135deg, #4facfe, #00f2fe)' },
+                { icon: ShoppingBag, title: 'Smart Shopping', desc: 'AI-powered shopping assistant', color: 'linear-gradient(135deg, #fa709a, #fee140)' },
+                { icon: Users, title: 'Social Fashion', desc: 'Connect with style community', color: 'linear-gradient(135deg, #30cfd0, #330867)' },
+                { icon: Leaf, title: 'Sustainability', desc: 'Eco-friendly fashion choices', color: 'linear-gradient(135deg, #a8edea, #fed6e3)' },
+              ].map((feature, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveTab(feature.title.toLowerCase().replace(' ', '-'))}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '20px',
+                    padding: '32px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-8px)';
+                    e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.2)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 10px 40px rgba(0,0,0,0.1)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    margin: '0 auto 20px',
+                    background: feature.color,
+                    borderRadius: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+                  }}>
+                    <feature.icon size={40} color="white" />
+                  </div>
+                  <h3 style={{
+                    fontSize: '20px',
+                    fontWeight: '700',
+                    marginBottom: '8px',
+                    color: '#1e293b'
+                  }}>{feature.title}</h3>
+                  <p style={{
+                    fontSize: '14px',
+                    color: '#64748b',
+                    margin: 0
+                  }}>{feature.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* AI STYLING PAGE */}
+        {activeTab === 'ai-styling' && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '32px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)'
+            }}>🪄 73 AI Styling Functions</h2>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+              gap: '16px'
+            }}>
+              {[
+                { name: 'Generate Outfit', func: () => handleAIFunction('generateOutfit', AI.generateOutfit, 'wedding', 'elegant'), icon: Sparkles },
+                { name: 'Analyze Style', func: () => handleAIFunction('analyzeStyle', AI.analyzeStyle, 'minimalist modern'), icon: BarChart3 },
+                { name: 'Color Palette', func: () => handleAIFunction('suggestColorPalette', AI.suggestColorPalette, 'navy blue', 'summer'), icon: Palette },
+                { name: 'Trend Analysis', func: () => handleAIFunction('analyzeTrends', AI.analyzeTrends, 2025, 'streetwear'), icon: TrendingUp },
+                { name: 'Wardrobe Optimization', func: () => handleAIFunction('optimizeWardrobe', AI.optimizeWardrobe, ['jeans', 'tshirt', 'blazer']), icon: Shirt },
+                { name: 'Personal Shopping', func: () => handleAIFunction('personalShopping', AI.personalShopping, 'casual chic', '$500'), icon: ShoppingBag },
+                { name: 'Occasion Dressing', func: () => handleAIFunction('dressForOccasion', AI.dressForOccasion, 'job interview', 'sunny'), icon: Calendar },
+                { name: 'Mix & Match', func: () => handleAIFunction('mixAndMatch', AI.mixAndMatch, ['white shirt', 'black top'], ['blue jeans', 'black skirt']), icon: Scissors },
+                { name: 'Accessory Pairing', func: () => handleAIFunction('suggestAccessories', AI.suggestAccessories, 'little black dress'), icon: Gem },
+                { name: 'Body Type Styling', func: () => handleAIFunction('styleForBodyType', AI.styleForBodyType, 'pear', 'balance proportions'), icon: User },
+                { name: 'Sustainable Fashion', func: () => handleAIFunction('suggestSustainableAlternatives', AI.suggestSustainableAlternatives, 'leather jacket'), icon: Leaf },
+                { name: 'Vintage Styling', func: () => handleAIFunction('vintageStyleGuide', AI.vintageStyleGuide, '1970s', true), icon: Star },
+                { name: 'Celebrity Style Match', func: () => handleAIFunction('matchCelebrityStyle', AI.matchCelebrityStyle, 'edgy rocker chic'), icon: Crown },
+                { name: 'Seasonal Wardrobe', func: () => handleAIFunction('planSeasonalWardrobe', AI.planSeasonalWardrobe, 'winter', 'cold'), icon: Calendar },
+                { name: 'Fashion Week Insights', func: () => handleAIFunction('analyzeFashionWeek', AI.analyzeFashionWeek, 'Paris', 2024), icon: Globe },
+                { name: 'Budget Styling', func: () => handleAIFunction('budgetStyleAdvice', AI.budgetStyleAdvice, 200, 'professional wardrobe'), icon: Target },
+                { name: 'Work Wardrobe', func: () => handleAIFunction('buildWorkWardrobe', AI.buildWorkWardrobe, 'tech', 'smart casual'), icon: Package },
+                { name: 'Travel Packing', func: () => handleAIFunction('packForTravel', AI.packForTravel, 'Paris', 7), icon: Globe },
+                { name: 'Special Occasion', func: () => handleAIFunction('styleSpecialOccasion', AI.styleSpecialOccasion, 'gala', 'black tie'), icon: Star },
+                { name: 'Capsule Wardrobe', func: () => handleAIFunction('createCapsuleWardrobe', AI.createCapsuleWardrobe, 30, 'minimalist'), icon: Shirt },
+                
+                // 10 MISSING FEATURES - NOW INCLUDED!
+                { name: 'Brand Affinity', func: () => handleAIFunction('analyzeBrandAffinity', AI.analyzeBrandAffinity, ['Zara', 'H&M', 'Uniqlo'], 'minimalist affordable'), icon: Heart, badge: 'NEW' },
+                { name: 'Pattern Mix Analysis', func: () => handleAIFunction('analyzePatternMix', AI.analyzePatternMix, ['stripes', 'polka dots'], ['navy', 'white']), icon: Palette, badge: 'NEW' },
+                { name: 'Carbon Footprint', func: () => handleAIFunction('estimateWardrobeCarbonFootprint', AI.estimateWardrobeCarbonFootprint, ['10 shirts', '5 jeans'], ['cotton', 'polyester']), icon: Leaf, badge: 'NEW' },
+                { name: 'Celebrity Style Twin', func: () => handleAIFunction('findCelebrityStyleTwin', AI.findCelebrityStyleTwin, 'minimalist chic', ['neutral colors', 'tailored']), icon: Crown, badge: 'NEW' },
+                { name: 'Thrifted Alternatives', func: () => handleAIFunction('findThriftedAlternatives', AI.findThriftedAlternatives, 'vintage leather jacket', 150, 'Brooklyn'), icon: Recycle, badge: 'NEW' },
+                { name: 'Event Style Forecast', func: () => handleAIFunction('forecastEventStyle', AI.forecastEventStyle, 'wedding', '2025-06-15', ['sustainable', 'romantic']), icon: TrendingUp, badge: 'NEW' },
+                { name: 'Fashion Illustration', func: () => handleAIFunction('generateFashionIllustration', AI.generateFashionIllustration, 'flowing evening gown', 'watercolor'), icon: Camera, badge: 'NEW' },
+                { name: 'Outfit Playlist', func: () => handleAIFunction('generatePlaylistForOutfit', AI.generatePlaylistForOutfit, 'streetwear sneakers', 'energetic', 'hip-hop'), icon: Zap, badge: 'NEW' },
+                { name: 'Seamless Pattern', func: () => handleAIFunction('generateSeamlessPattern', AI.generateSeamlessPattern, 'tropical', ['teal', 'coral'], 'modern'), icon: Package, badge: 'NEW' },
+                { name: 'Fit Prediction', func: () => handleAIFunction('predictFitForProduct', AI.predictFitForProduct, 'chest:38 waist:32', 'blazer', 'J.Crew'), icon: Shirt, badge: 'NEW' },
+              ].map((feature, idx) => (
+                <button
+                  key={idx}
+                  onClick={feature.func}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                    position: 'relative'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.15)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+                  }}
+                >
+                  {feature.badge && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      background: 'linear-gradient(135deg, #f093fb, #f5576c)',
+                      color: 'white',
+                      fontSize: '10px',
+                      fontWeight: '700',
+                      padding: '4px 8px',
+                      borderRadius: '6px'
+                    }}>
+                      {feature.badge}
+                    </div>
+                  )}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <feature.icon size={24} color="white" />
+                    </div>
+                    <div>
+                      <div style={{
+                        fontSize: '15px',
+                        fontWeight: '600',
+                        color: '#1e293b',
+                        marginBottom: '4px'
+                      }}>{feature.name}</div>
+                      <div style={{
+                        fontSize: '12px',
+                        color: '#64748b'
+                      }}>Try AI feature</div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Results Display */}
+            {(loading || result) && (
+              <div style={{
+                marginTop: '32px',
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '16px',
+                padding: '32px',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+              }}>
+                <h3 style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  marginBottom: '16px',
+                  color: '#1e293b'
+                }}>
+                  {loading ? '⏳ AI Processing...' : '✨ AI Result'}
+                </h3>
+                <div style={{
+                  fontSize: '15px',
+                  lineHeight: 1.7,
+                  color: '#475569',
+                  whiteSpace: 'pre-wrap'
+                }}>
+                  {loading ? 'Analyzing with AI...' : result}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* WARDROBE PAGE */}
+        {activeTab === 'wardrobe' && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '32px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)'
+            }}>👔 Smart Wardrobe Manager</h2>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '20px',
+                padding: '32px',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+              }}>
+                <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#1e293b' }}>
+                  Wardrobe Analytics
+                </h3>
+                <p style={{ color: '#64748b', lineHeight: 1.7 }}>
+                  Track your clothing items, analyze your style patterns, and get AI-powered insights to optimize your wardrobe.
+                </p>
+                <button style={{
+                  marginTop: '20px',
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }} onClick={() => handleAIFunction('organizeCloset', AI.organizeCloset, 'medium', 100)}>
+                  Analyze My Wardrobe
+                </button>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '20px',
+                padding: '32px',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+              }}>
+                <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#1e293b' }}>
+                  Seasonal Rotation
+                </h3>
+                <p style={{ color: '#64748b', lineHeight: 1.7 }}>
+                  Get AI suggestions for rotating your wardrobe seasonally and storing items properly.
+                </p>
+                <button style={{
+                  marginTop: '20px',
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #f093fb, #f5576c)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }} onClick={() => handleAIFunction('rotateCloset', AI.rotateCloset, 'summer', 'fall')}>
+                  Plan Rotation
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* OTHER PAGES PLACEHOLDERS */}
+        {activeTab === 'trends' && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '32px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)'
+            }}>📈 Fashion Trends & Forecasting</h2>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              padding: '48px',
+              textAlign: 'center',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+            }}>
+              <TrendingUp size={64} style={{ margin: '0 auto 24px', color: '#667eea' }} />
+              <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#1e293b' }}>
+                AI-Powered Trend Analysis
+              </h3>
+              <p style={{ fontSize: '16px', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
+                Stay ahead with real-time fashion trend forecasting, celebrity style insights, and personalized trend recommendations.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'shopping' && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '32px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)'
+            }}>🛍️ Smart Shopping Assistant</h2>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              padding: '48px',
+              textAlign: 'center',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+            }}>
+              <ShoppingBag size={64} style={{ margin: '0 auto 24px', color: '#f5576c' }} />
+              <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#1e293b' }}>
+                Your Personal Shopping AI
+              </h3>
+              <p style={{ fontSize: '16px', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
+                Get personalized shopping recommendations, budget optimization, and style suggestions tailored to your preferences.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'social' && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '32px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)'
+            }}>👥 Fashion Social Network</h2>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              padding: '48px',
+              textAlign: 'center',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+            }}>
+              <Users size={64} style={{ margin: '0 auto 24px', color: '#764ba2' }} />
+              <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#1e293b' }}>
+                Connect With Style Community
+              </h3>
+              <p style={{ fontSize: '16px', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
+                Share outfits, get feedback, follow fashion influencers, and discover new styles from a global community.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'sustainability' && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '32px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)'
+            }}>🌿 Sustainable Fashion Hub</h2>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              padding: '48px',
+              textAlign: 'center',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+            }}>
+              <Leaf size={64} style={{ margin: '0 auto 24px', color: '#10b981' }} />
+              <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#1e293b' }}>
+                Eco-Friendly Fashion Choices
+              </h3>
+              <p style={{ fontSize: '16px', color: '#64748b', maxWidth: '600px', margin: '0 auto 16px' }}>
+                Track your wardrobe's carbon footprint, find sustainable alternatives, and make environmentally conscious fashion decisions.
+              </p>
+              <button style={{
+                marginTop: '20px',
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }} onClick={() => handleAIFunction('carbonFootprint', AI.estimateWardrobeCarbonFootprint, ['20 items'], ['cotton', 'polyester'])}>
+                Calculate My Carbon Footprint
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'gamification' && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '32px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)'
+            }}>🏆 Style Rewards & Challenges</h2>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              padding: '48px',
+              textAlign: 'center',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+            }}>
+              <Trophy size={64} style={{ margin: '0 auto 24px', color: '#f59e0b' }} />
+              <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#1e293b' }}>
+                Earn Rewards for Your Style
+              </h3>
+              <p style={{ fontSize: '16px', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
+                Complete style challenges, earn badges, unlock achievements, and level up your fashion game!
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'settings' && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              color: 'white',
+              marginBottom: '32px',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)'
+            }}>⚙️ Settings & Preferences</h2>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              padding: '32px',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '24px', color: '#1e293b' }}>
+                API Configuration
+              </h3>
+              <p style={{ color: '#64748b', marginBottom: '16px' }}>
+                Add your Google Gemini API key as an environment variable:
+              </p>
+              <code style={{
+                display: 'block',
+                background: '#1e293b',
+                color: '#10b981',
+                padding: '16px',
+                borderRadius: '8px',
+                fontFamily: 'monospace'
+              }}>
+                VITE_GEMINI_API_KEY=your_api_key_here
+              </code>
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* ===== GLOBAL STYLES ===== */}
+      <style>{`
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          margin: 0;
+          overflow-x: hidden;
+        }
+
+        button {
+          font-family: inherit;
+        }
+
+        ::-webkit-scrollbar {
+          width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: rgba(0,0,0,0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          borderRadius: 6px;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+export default App;
