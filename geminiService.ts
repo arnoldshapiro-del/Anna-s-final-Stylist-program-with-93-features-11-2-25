@@ -3,24 +3,20 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!API_KEY) {
-  console.error("❌ API Key not found! Set VITE_GEMINI_API_KEY in Netlify environment variables");
+  console.error("❌ API Key not found!");
 }
 
 const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
 
 export async function generateContent({ prompt }) {
-  if (!API_KEY) {
-    throw new Error("API key not configured. Please set VITE_GEMINI_API_KEY in Netlify.");
-  }
-
-  if (!genAI) {
-    throw new Error("GoogleGenerativeAI not initialized");
+  if (!API_KEY || !genAI) {
+    throw new Error("API key not configured");
   }
 
   try {
-    // CORRECT MODEL NAME - NOT "gemini-1.5-flash-latest"
+    // Using gemini-pro - the most basic and stable model
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash"  // ✅ THIS IS THE RIGHT ONE
+      model: "gemini-pro"
     });
 
     const result = await model.generateContent(prompt);
