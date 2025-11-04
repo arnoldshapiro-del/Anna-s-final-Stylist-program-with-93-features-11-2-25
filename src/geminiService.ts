@@ -1,118 +1,176 @@
+// src/geminiService.ts
+// Purpose: keep the exact function names your App.tsx imports,
+// and make everything work even if the UI passes an empty or undefined "prompt".
+// We fall back to a sensible default user profile & instructions.
+
 import { generateText } from "./lib/geminiClient";
 
-// Minimal helper used by every feature
-async function ask(prompt: string): Promise<string> {
-  return generateText(prompt);
+// A safe, generic starter profile used when the UI gives us nothing.
+const DEFAULT_PROFILE = `
+USER PROFILE (DEFAULT FALLBACK)
+- Style: classic + modern casual (clean lines, neutral core with 1 accent color)
+- Use case: everyday + smart-casual; occasional work meetings; date night 1x/week
+- Climate: mixed seasons (cool winters, warm summers); indoor AC common
+- Fit prefs: comfortable, tailored-not-tight; mid-rise; avoid itchy fabrics
+- Budget per item: $50–$150 (flex to $250 for shoes/jackets)
+- Colors to favor: navy, charcoal, off-white, olive; accent: burgundy
+- Avoid: neon, heavy logos, overly distressed denim
+- Sizes (approx): tops M, bottoms 32/32, shoes US 10 (adjust as needed)
+- Closet highlights: dark denim, chinos, OCBD, crew tees, merino sweater, white sneakers, casual boots, unstructured blazer
+- Sustainability: prefer durable basics over micro-trends
+`;
+
+// A short "system" instruction we’ll prepend so responses are structured and useful.
+const BASE_INSTRUCTIONS = `
+You are a fashion assistant. Return clear, actionable results with short bullets.
+For lists, use 3–7 items. Include rationale when helpful. Keep output concise.
+When recommending products, describe what to look for (cuts/fabrics/features) instead of specific affiliate links.
+`;
+
+// Helper: normalize any input; if it's blank/undefined, use our default profile.
+function resolvePrompt(raw: unknown): string {
+  const s = (typeof raw === "string" ? raw : "").trim();
+  return s.length ? s : DEFAULT_PROFILE;
 }
 
-/**
- * Keep the exact function names your App.tsx expects.
- * Each function takes { prompt: string } and returns Promise<string>.
- * No other imports. No deprecated SDKs. All calls go through the Netlify function via generateText().
- */
-
-// Outfit & styling core
-export async function generateOutfit({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Create a complete outfit plan with reasoning.\nUser input: ${prompt}`);
-}
-export async function analyzeStyle({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Analyze this personal style and give clear tips.\nInput: ${prompt}`);
-}
-export async function suggestColorPalette({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Suggest a cohesive color palette and why.\nContext: ${prompt}`);
-}
-export async function analyzeTrends({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Summarize relevant fashion trends for this query.\nQuery: ${prompt}`);
-}
-export async function optimizeWardrobe({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Optimize wardrobe: keep, tailor, donate, buy list.\nWardrobe: ${prompt}`);
-}
-export async function personalShopping({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Personal shopping list with price tiers and sources.\nNeeds: ${prompt}`);
-}
-export async function dressForOccasion({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Outfit plan matched to occasion & weather.\nOccasion: ${prompt}`);
-}
-export async function mixAndMatch({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Mix-and-match combinations from items.\nItems: ${prompt}`);
-}
-export async function suggestAccessories({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Accessory recommendations and why they fit.\nContext: ${prompt}`);
-}
-export async function styleForBodyType({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Body-type-aware styling guidance.\nDetails: ${prompt}`);
-}
-export async function suggestSustainableAlternatives({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Sustainable alternatives and materials.\nRequest: ${prompt}`);
-}
-export async function vintageStyleGuide({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Vintage styling guide with eras and fits.\nFocus: ${prompt}`);
-}
-export async function matchCelebrityStyle({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Translate this celeb look to affordable options.\nLook: ${prompt}`);
-}
-export async function planSeasonalWardrobe({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Seasonal capsule plan with essentials.\nSeason/context: ${prompt}`);
-}
-export async function analyzeFashionWeek({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Key takeaways from relevant Fashion Week looks.\nFocus: ${prompt}`);
-}
-export async function budgetStyleAdvice({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Style strategy under a budget with priorities.\nBudget/context: ${prompt}`);
-}
-export async function buildWorkWardrobe({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Work wardrobe plan by role & dress code.\nDetails: ${prompt}`);
-}
-export async function packForTravel({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Travel packing list (weather, activities, re-wear plan).\nTrip: ${prompt}`);
-}
-export async function styleSpecialOccasion({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Special-occasion outfit with accessories.\nOccasion: ${prompt}`);
-}
-export async function createCapsuleWardrobe({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Capsule wardrobe (tops, bottoms, layers, shoes) with counts.\nContext: ${prompt}`);
+// Single call that every feature uses.
+async function ask(raw: unknown, featureLabel: string): Promise<string> {
+  const prompt = resolvePrompt(raw);
+  const full = `${BASE_INSTRUCTIONS}
+TASK: ${featureLabel}
+INPUT:
+${prompt}
+`;
+  return generateText(full);
 }
 
-// Analysis / pattern / footprint
-export async function analyzeBrandAffinity({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Brands that fit this style & budget.\nProfile: ${prompt}`);
-}
-export async function analyzePatternMix({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Pattern-mixing guidance: what pairs well and why.\nItems: ${prompt}`);
-}
-export async function estimateWardrobeCarbonFootprint({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`High-level wardrobe carbon footprint estimate with suggestions.\nWardrobe: ${prompt}`);
-}
-export async function findCelebrityStyleTwin({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Celeb style twin ideas and what to copy.\nDetails: ${prompt}`);
-}
-export async function findThriftedAlternatives({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Thrift/secondhand alternatives with search terms.\nTargets: ${prompt}`);
-}
-export async function forecastEventStyle({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Forecast fitting styles for event/date & location.\nEvent: ${prompt}`);
+// -------------- Exported functions (names must match App.tsx) --------------
+// Each function accepts { prompt: string } but we’ll survive if prompt is missing.
+
+export async function generateOutfit({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Create a complete outfit plan with reasoning. Include top, bottom, footwear, outer layer (if relevant), and 1–2 accessories.");
 }
 
-// Creative / assets
-export async function generateFashionIllustration({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Describe a fashion illustration to generate, including pose, fabric, and mood.\nBrief: ${prompt}`);
-}
-export async function generatePlaylistForOutfit({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Playlist that matches outfit vibe (10–15 tracks).\nVibe: ${prompt}`);
-}
-export async function generateSeamlessPattern({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Text description for a seamless repeatable pattern.\nTheme: ${prompt}`);
+export async function analyzeStyle({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Analyze current style. Give 3 strengths, 3 opportunities, and 5 quick upgrades.");
 }
 
-// Fit / product
-export async function predictFitForProduct({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Fit prediction & size recommendation with rationale.\nInput: ${prompt}`);
+export async function suggestColorPalette({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Suggest a cohesive color palette (core + accents). Include 3 sample outfits using that palette.");
 }
 
-// Closet ops
-export async function organizeCloset({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Closet organization plan (zones, hang/fold, rotate).\nInventory: ${prompt}`);
+export async function analyzeTrends({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Summarize relevant trends that fit the profile. For each, describe how to wear it minimally.");
 }
-export async function rotateCloset({ prompt }: { prompt: string }): Promise<string> {
-  return ask(`Rotation schedule by season and wear frequency.\nDetails: ${prompt}`);
+
+export async function optimizeWardrobe({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Wardrobe optimization: Keep / Tailor / Donate / Acquire lists with reasons. Max 7 items per list.");
+}
+
+export async function personalShopping({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Personal shopping plan by priorities. For each category list fit, fabric, and what to avoid.");
+}
+
+export async function dressForOccasion({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Dress for an occasion. Give 2 outfit options (Option A conservative, Option B stylish).");
+}
+
+export async function mixAndMatch({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Mix-and-match matrix: 5 tops × 3 bottoms × 2 shoes → list 6 strong combos with why they work.");
+}
+
+export async function suggestAccessories({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Accessory capsule (watch, belt, bag, scarf/hat, sunglasses). 1–2 options each with quick rationale.");
+}
+
+export async function styleForBodyType({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Body-type-aware guidance: best silhouettes, rises, leg openings, jacket lengths. Include 3 fit checks.");
+}
+
+export async function suggestSustainableAlternatives({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Sustainable swaps: fabrics to prefer/avoid, durability checks, care tips. List 5 long-life buys.");
+}
+
+export async function vintageStyleGuide({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Vintage style guide: key eras that fit, 5 staple pieces, and how to modernize each.");
+}
+
+export async function matchCelebrityStyle({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Translate a celebrity look to accessible options. Identify the key 3 elements and budget alternates.");
+}
+
+export async function planSeasonalWardrobe({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Seasonal capsule: 12 pieces max. Show 8 outfits that cover weekday/weekend/evening.");
+}
+
+export async function analyzeFashionWeek({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Fashion Week insights: 4 trends that align with the profile; 1 practical way to try each.");
+}
+
+export async function budgetStyleAdvice({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Budget strategy: where to spend vs save (5/5). Include a 3-month buy schedule.");
+}
+
+export async function buildWorkWardrobe({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Work wardrobe plan by dress code. Give essentials, rotation plan, and quick grooming checklist.");
+}
+
+export async function packForTravel({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Travel packing list (carry-on). List items and show 6 outfits covering all activities.");
+}
+
+export async function styleSpecialOccasion({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Special-occasion outfit with accessory map and optional backup plan.");
+}
+
+export async function createCapsuleWardrobe({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Design a capsule wardrobe (max 20 items) with roles and 10 outfit examples.");
+}
+
+export async function analyzeBrandAffinity({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Brand affinity: 6 brands that match style/budget with one-liner why each fits.");
+}
+
+export async function analyzePatternMix({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Pattern mixing: 5 pairings, scale/contrast rules, and 3 safe starter combos.");
+}
+
+export async function estimateWardrobeCarbonFootprint({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Estimate wardrobe footprint at a high level; give 5 reduction tactics with impact order.");
+}
+
+export async function findCelebrityStyleTwin({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Celebrity style twins and what to borrow (silhouette, palette, signature piece).");
+}
+
+export async function findThriftedAlternatives({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Thrift search strategy: keywords, fabrics to target, quick condition checks, tailoring tips.");
+}
+
+export async function forecastEventStyle({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Event style forecast (season/location). 2 looks and weather/venue adjustments.");
+}
+
+export async function generateFashionIllustration({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Describe a fashion illustration prompt (pose, garment drape, fabric texture, lighting, background).");
+}
+
+export async function generatePlaylistForOutfit({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Music playlist (12–15 tracks) matching outfit mood; include 3 mood tags.");
+}
+
+export async function generateSeamlessPattern({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Seamless pattern brief: motif, repeat type, scale, colorway, and 3 use-cases.");
+}
+
+export async function predictFitForProduct({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Fit & size recommendation with the 3 most important measurements/returns risks.");
+}
+
+export async function organizeCloset({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Closet organization (zones, hang vs fold, seasonal box, rotate cadence). Include 5-minute resets.");
+}
+
+export async function rotateCloset({ prompt }: { prompt?: string }): Promise<string> {
+  return ask(prompt, "Closet rotation schedule by season and wear frequency; list triggers to rotate early.");
 }
